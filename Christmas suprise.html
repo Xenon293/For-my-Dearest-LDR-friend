@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Christmas Surprise for You! 🎄</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial Rounded MT Bold', 'Arial', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(180deg, #0a2e1d 0%, #0c3812 30%, #0a1a0a 100%);
+            color: white;
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 2rem;
+            text-align: center;
+            position: relative;
+            z-index: 10;
+        }
+
+        header {
+            margin-bottom: 2rem;
+            padding-top: 1rem;
+        }
+
+        h1 {
+            font-size: 3.5rem;
+            text-shadow: 0 0 15px rgba(255, 50, 50, 0.7);
+            margin-bottom: 0.5rem;
+            color: #ffeb3b;
+            animation: glow 2s infinite alternate;
+        }
+
+        .friend-name {
+            color: #4fc3f7;
+            font-size: 2.8rem;
+            text-shadow: 0 0 10px rgba(79, 195, 247, 0.8);
+            margin-bottom: 1rem;
+        }
+
+        .main-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .countdown-container {
+            background: rgba(0, 20, 10, 0.7);
+            border-radius: 20px;
+            padding: 2rem;
+            width: 100%;
+            max-width: 700px;
+            border: 3px solid #ff5722;
+            box-shadow: 0 0 25px rgba(255, 87, 34, 0.5);
+            margin-bottom: 1rem;
+        }
+
+        .countdown-title {
+            font-size: 1.8rem;
+            color: #ffcc80;
+            margin-bottom: 1.5rem;
+        }
+
+        .countdown {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .countdown-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .countdown-value {
+            font-size: 3.5rem;
+            font-weight: bold;
+            background: rgba(255, 255, 255, 0.1);
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 0.5rem;
+            border: 3px solid;
+            box-shadow: 0 0 15px currentColor;
+        }
+
+        .hours { color: #ff9800; border-color: #ff9800; }
+        .minutes { color: #4caf50; border-color: #4caf50; }
+        .seconds { color: #2196f3; border-color: #2196f3; }
+
+        .countdown-label {
+            font-size: 1.2rem;
+            color: #ccc;
+        }
+
+        .timezone-info {
+            margin-top: 1rem;
+            font-size: 1.2rem;
+            color: #ffccbc;
+        }
+
+        .message-container {
+            background: rgba(139, 0, 0, 0.2);
+            border-radius: 20px;
+            padding: 2rem;
+            width: 100%;
+            max-width: 700px;
+            border: 3px solid #ffeb3b;
+            box-shadow: 0 0 25px rgba(255, 235, 59, 0.4);
+            margin-top: 1rem;
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 1.5s ease;
+        }
+
+        .message-container.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .message-title {
+            font-size: 2.2rem;
+            color: #ffeb3b;
+            margin-bottom: 1.5rem;
+            text-shadow: 0 0 10px rgba(255, 235, 59, 0.7);
+        }
+
+        .message-content {
+            font-size: 1.5rem;
+            line-height: 1.6;
+            color: #e0e0e0;
+            text-align: left;
+            padding: 0 1rem;
+        }
+
+        .signature {
+            text-align: right;
+            margin-top: 2rem;
+            font-size: 1.8rem;
+            color: #bb86fc;
+            font-style: italic;
+        }
+
+        .snowflake {
+            position: absolute;
+            background-color: white;
+            border-radius: 50%;
+            pointer-events: none;
+            opacity: 0.8;
+            z-index: 1;
+        }
+
+        .lights {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 30px;
+            z-index: 5;
+            overflow: hidden;
+        }
+
+        .light {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            animation: twinkle 1.5s infinite alternate;
+        }
+
+        .tree {
+            position: fixed;
+            bottom: 0;
+            right: 50px;
+            width: 200px;
+            height: 300px;
+            z-index: 2;
+        }
+
+        .tree:before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 40px;
+            height: 60px;
+            background: #8B4513;
+            z-index: 2;
+        }
+
+        .tree-part {
+            position: absolute;
+            width: 0;
+            height: 0;
+            border-left: 80px solid transparent;
+            border-right: 80px solid transparent;
+            border-bottom: 100px solid #0a7e0a;
+            bottom: 60px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .tree-part:nth-child(2) {
+            bottom: 130px;
+            border-bottom-color: #0b8e0b;
+            width: 0;
+            height: 0;
+            border-left: 70px solid transparent;
+            border-right: 70px solid transparent;
+            border-bottom: 90px solid #0b8e0b;
+        }
+
+        .tree-part:nth-child(3) {
+            bottom: 200px;
+            border-bottom-color: #0c9e0c;
+            width: 0;
+            height: 0;
+            border-left: 60px solid transparent;
+            border-right: 60px solid transparent;
+            border-bottom: 80px solid #0c9e0c;
+        }
+
+        .star {
+            position: absolute;
+            top: 190px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: gold;
+            font-size: 40px;
+            text-shadow: 0 0 20px gold;
+            animation: spin 4s linear infinite;
+            z-index: 3;
+        }
+
+        .ornament {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            z-index: 3;
+        }
+
+        .ornament-1 { background: red; top: 220px; left: 45%; }
+        .ornament-2 { background: blue; top: 250px; left: 55%; }
+        .ornament-3 { background: yellow; top: 280px; left: 40%; }
+        .ornament-4 { background: purple; top: 310px; left: 60%; }
+        .ornament-5 { background: orange; top: 340px; left: 50%; }
+
+        .music-control {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 100;
+            border: 2px solid gold;
+            font-size: 28px;
+            color: gold;
+        }
+
+        @keyframes glow {
+            0% { text-shadow: 0 0 15px rgba(255, 50, 50, 0.7); }
+            100% { text-shadow: 0 0 25px rgba(255, 50, 50, 0.9), 0 0 35px rgba(255, 50, 50, 0.6); }
+        }
+
+        @keyframes twinkle {
+            0% { opacity: 0.3; transform: scale(0.9); }
+            100% { opacity: 1; transform: scale(1.1); }
+        }
+
+        @keyframes spin {
+            0% { transform: translateX(-50%) rotate(0deg); }
+            100% { transform: translateX(-50%) rotate(360deg); }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(10deg); }
+        }
+
+        .reindeer {
+            position: fixed;
+            bottom: 50px;
+            left: -200px;
+            font-size: 80px;
+            animation: sleighRide 30s linear infinite;
+            z-index: 3;
+        }
+
+        @keyframes sleighRide {
+            0% { left: -200px; }
+            100% { left: 100%; }
+        }
+
+        @media (max-width: 768px) {
+            h1 { font-size: 2.5rem; }
+            .friend-name { font-size: 2rem; }
+            .countdown-value { font-size: 2.5rem; width: 80px; height: 80px; }
+            .countdown { gap: 1rem; }
+            .tree { display: none; }
+        }
+    </style>
+</head>
+<body>
+    <div class="lights" id="lights-container"></div>
+    
+    <div class="container">
+        <header>
+            <h1>🎄 Christmas Countdown 🎄</h1>
+            <div class="friend-name" id="friendName">For My Dear Friend!</div>
+            <p style="font-size: 1.3rem; color: #a5d6a7;">A special surprise at midnight in your timezone</p>
+        </header>
+        
+        <div class="main-content">
+            <div class="countdown-container">
+                <h2 class="countdown-title">Time until Christmas in your timezone:</h2>
+                <div class="countdown">
+                    <div class="countdown-item">
+                        <div class="countdown-value hours" id="hours">00</div>
+                        <div class="countdown-label">Hours</div>
+                    </div>
+                    <div class="countdown-item">
+                        <div class="countdown-value minutes" id="minutes">00</div>
+                        <div class="countdown-label">Minutes</div>
+                    </div>
+                    <div class="countdown-item">
+                        <div class="countdown-value seconds" id="seconds">00</div>
+                        <div class="countdown-label">Seconds</div>
+                    </div>
+                </div>
+                <div class="timezone-info">
+                    Your timezone: <span id="timezoneDisplay">Loading...</span>
+                </div>
+            </div>
+            
+            <div class="message-container" id="messageContainer">
+                <h2 class="message-title">🎅 Merry Christmas! 🎅</h2>
+                <div class="message-content">
+                    <p>My dearest friend,</p>
+                    <p>Even though miles keep us apart, you're always close in my heart. Wishing you the most magical Christmas filled with love, laughter, and all the joy you bring to others.</p>
+                    <p>May this holiday season wrap you in warmth and remind you how special you are. I miss our Christmas traditions together and can't wait to make new memories when we're reunited.</p>
+                    <p>Thinking of you always, especially on this special day! 🎄✨</p>
+                </div>
+                <div class="signature">
+                    With love,<br>
+                    Your long-distance friend ❤️
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="tree">
+        <div class="tree-part"></div>
+        <div class="tree-part"></div>
+        <div class="tree-part"></div>
+        <div class="star">★</div>
+        <div class="ornament ornament-1"></div>
+        <div class="ornament ornament-2"></div>
+        <div class="ornament ornament-3"></div>
+        <div class="ornament ornament-4"></div>
+        <div class="ornament ornament-5"></div>
+    </div>
+    
+    <div class="reindeer">🦌</div>
+    
+    <div class="music-control" id="musicControl">
+        <i class="fas fa-music"></i>
+    </div>
+    
+    <audio id="backgroundMusic" loop>
+        <source src="Wham! - Last Christmas (Lyrics).mp3" type="audio/mpeg">
+    </audio>
+
+    <script>
+        // Configuration - CHANGE THESE VALUES
+        const friendName = "Eunice"; // Replace with your friend's name
+        const friendTimezone = "Europe/London"; // Replace with your friend's timezone
+        
+        // Set friend's name
+        document.getElementById('friendName').textContent = `For ${friendName}!`;
+        
+        // Set timezone display
+        document.getElementById('timezoneDisplay').textContent = friendTimezone;
+        
+        // Get DOM elements
+        const hoursEl = document.getElementById('hours');
+        const minutesEl = document.getElementById('minutes');
+        const secondsEl = document.getElementById('seconds');
+        const messageContainer = document.getElementById('messageContainer');
+        const musicControl = document.getElementById('musicControl');
+        const backgroundMusic = document.getElementById('backgroundMusic');
+        
+        // Create Christmas lights
+        function createLights() {
+            const lightsContainer = document.getElementById('lights-container');
+            const colors = ['#ff0000', '#00ff00', '#ffff00', '#ff00ff', '#00ffff', '#ff9900'];
+            
+            for (let i = 0; i < 50; i++) {
+                const light = document.createElement('div');
+                light.className = 'light';
+                light.style.left = `${(i / 50) * 100}%`;
+                light.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                light.style.animationDelay = `${Math.random() * 2}s`;
+                lightsContainer.appendChild(light);
+            }
+        }
+        
+        // Create snowflakes
+        function createSnowflakes() {
+            for (let i = 0; i < 100; i++) {
+                createSnowflake();
+            }
+        }
+        
+        function createSnowflake() {
+            const snowflake = document.createElement('div');
+            snowflake.className = 'snowflake';
+            
+            // Random size between 3 and 10px
+            const size = Math.random() * 7 + 3;
+            snowflake.style.width = `${size}px`;
+            snowflake.style.height = `${size}px`;
+            
+            // Random position
+            snowflake.style.left = `${Math.random() * 100}vw`;
+            snowflake.style.top = `-10px`;
+            
+            // Random opacity
+            snowflake.style.opacity = Math.random() * 0.5 + 0.3;
+            
+            document.body.appendChild(snowflake);
+            
+            // Animation
+            const duration = Math.random() * 10 + 10; // 10-20 seconds
+            const delay = Math.random() * 5;
+            
+            snowflake.style.transition = `all ${duration}s linear ${delay}s`;
+            
+            // Move snowflake down and slightly sideways
+            setTimeout(() => {
+                snowflake.style.transform = `translate(${Math.random() * 100 - 50}px, 100vh) rotate(${Math.random() * 360}deg)`;
+                snowflake.style.opacity = '0';
+            }, 10);
+            
+            // Remove snowflake after animation and create a new one
+            setTimeout(() => {
+                snowflake.remove();
+                createSnowflake();
+            }, (duration + delay) * 1000);
+        }
+        
+        // Calculate time until midnight in friend's timezone
+        function updateCountdown() {
+            // Get current time in friend's timezone
+            const now = new Date();
+            const options = { timeZone: friendTimezone, hour12: false };
+            const friendTimeStr = now.toLocaleTimeString('en-US', options);
+            const friendDateStr = now.toLocaleDateString('en-US', { timeZone: friendTimezone });
+            
+            // Create a date object for midnight in friend's timezone
+            const midnight = new Date(friendDateStr + ' 24:00:00');
+            const friendNow = new Date(now.toLocaleString('en-US', { timeZone: friendTimezone }));
+            
+            // If it's already Christmas in their timezone
+            const isChristmas = friendNow.getMonth() === 11 && friendNow.getDate() === 25;
+            
+            if (isChristmas) {
+                // It's Christmas! Show the message
+                showChristmasMessage();
+                hoursEl.textContent = '00';
+                minutesEl.textContent = '00';
+                secondsEl.textContent = '00';
+                return;
+            }
+            
+            // Calculate time difference
+            let diff = midnight - friendNow;
+            
+            // If midnight has passed but it's not Christmas yet (edge case)
+            if (diff < 0) {
+                diff += 24 * 60 * 60 * 1000; // Add 24 hours
+            }
+            
+            // Calculate hours, minutes, seconds
+            const hours = Math.floor(diff / (1000 * 60 * 60));
+            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+            
+            // Update display
+            hoursEl.textContent = hours.toString().padStart(2, '0');
+            minutesEl.textContent = minutes.toString().padStart(2, '0');
+            secondsEl.textContent = seconds.toString().padStart(2, '0');
+            
+            // Check if it's midnight (within 1 second)
+            if (hours === 0 && minutes === 0 && seconds <= 1) {
+                showChristmasMessage();
+            }
+        }
+        
+        // Show Christmas message and animations
+        function showChristmasMessage() {
+            messageContainer.classList.add('visible');
+            
+            // Add more snowflakes
+            for (let i = 0; i < 50; i++) {
+                setTimeout(() => createSnowflake(), i * 100);
+            }
+            
+            // Add floating ornaments animation
+            const ornaments = document.querySelectorAll('.ornament');
+            ornaments.forEach(ornament => {
+                ornament.style.animation = 'float 2s infinite ease-in-out';
+            });
+            
+            // Play music if not already playing
+            if (backgroundMusic.paused) {
+                backgroundMusic.volume = 0.3;
+                backgroundMusic.play();
+                musicControl.innerHTML = '<i class="fas fa-volume-up"></i>';
+            }
+        }
+        
+        // Music control
+        musicControl.addEventListener('click', () => {
+            if (backgroundMusic.paused) {
+                backgroundMusic.play();
+                musicControl.innerHTML = '<i class="fas fa-volume-up"></i>';
+            } else {
+                backgroundMusic.pause();
+                musicControl.innerHTML = '<i class="fas fa-volume-mute"></i>';
+            }
+        });
+        
+        // Initialize
+        function init() {
+            createLights();
+            createSnowflakes();
+            updateCountdown();
+            setInterval(updateCountdown, 1000);
+            
+            // Try to play music on user interaction (browser policy)
+            document.addEventListener('click', () => {
+                if (backgroundMusic.paused) {
+                    backgroundMusic.volume = 0.3;
+                    backgroundMusic.play().catch(e => console.log("Autoplay prevented"));
+                }
+            }, { once: true });
+        }
+        
+        // Start when page loads
+        window.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>
