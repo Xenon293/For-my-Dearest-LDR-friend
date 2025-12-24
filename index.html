@@ -334,28 +334,28 @@
         <header>
             <h1>🎄 Christmas Countdown 🎄</h1>
             <div class="friend-name" id="friendName">For My Dear Friend!</div>
-            <p style="font-size: 1.3rem; color: #a5d6a7;">A special surprise at midnight in your timezone</p>
+            <p style="font-size: 1.3rem; color: #a5d6a7;">A special surprise at midnight in the UK! 🇬🇧</p>
         </header>
         
         <div class="main-content">
             <div class="countdown-container">
-                <h2 class="countdown-title">Time until Christmas in your timezone:</h2>
+                <h2 class="countdown-title">Time until Christmas in UK:</h2>
                 <div class="countdown">
                     <div class="countdown-item">
-                        <div class="countdown-value hours" id="hours">00</div>
+                        <div class="countdown-value hours" id="hours">--</div>
                         <div class="countdown-label">Hours</div>
                     </div>
                     <div class="countdown-item">
-                        <div class="countdown-value minutes" id="minutes">00</div>
+                        <div class="countdown-value minutes" id="minutes">--</div>
                         <div class="countdown-label">Minutes</div>
                     </div>
                     <div class="countdown-item">
-                        <div class="countdown-value seconds" id="seconds">00</div>
+                        <div class="countdown-value seconds" id="seconds">--</div>
                         <div class="countdown-label">Seconds</div>
                     </div>
                 </div>
                 <div class="timezone-info">
-                    Your timezone: <span id="timezoneDisplay">Loading...</span>
+                    Timezone: <span id="timezoneDisplay">UK (London) - GMT/UTC+0</span>
                 </div>
             </div>
             
@@ -398,15 +398,12 @@
     </audio>
 
     <script>
-        // Configuration - CHANGE THESE VALUES
-        const friendName = "Eunice"; // Ma friends name
-        const friendTimezone = "Europe/London"; // friend's timezone
+        // ==== CHANGE THIS ONE LINE ====
+        const friendName = "Eunice"; // ← CHANGE TO YOUR FRIEND'S NAME
+        // ==============================
         
         // Set friend's name
         document.getElementById('friendName').textContent = `For ${friendName}!`;
-        
-        // Set timezone display
-        document.getElementById('timezoneDisplay').textContent = friendTimezone;
         
         // Get DOM elements
         const hoursEl = document.getElementById('hours');
@@ -442,56 +439,45 @@
             const snowflake = document.createElement('div');
             snowflake.className = 'snowflake';
             
-            // Random size between 3 and 10px
             const size = Math.random() * 7 + 3;
             snowflake.style.width = `${size}px`;
             snowflake.style.height = `${size}px`;
             
-            // Random position
             snowflake.style.left = `${Math.random() * 100}vw`;
             snowflake.style.top = `-10px`;
-            
-            // Random opacity
             snowflake.style.opacity = Math.random() * 0.5 + 0.3;
             
             document.body.appendChild(snowflake);
             
-            // Animation
-            const duration = Math.random() * 10 + 10; // 10-20 seconds
+            const duration = Math.random() * 10 + 10;
             const delay = Math.random() * 5;
             
             snowflake.style.transition = `all ${duration}s linear ${delay}s`;
             
-            // Move snowflake down and slightly sideways
             setTimeout(() => {
                 snowflake.style.transform = `translate(${Math.random() * 100 - 50}px, 100vh) rotate(${Math.random() * 360}deg)`;
                 snowflake.style.opacity = '0';
             }, 10);
             
-            // Remove snowflake after animation and create a new one
             setTimeout(() => {
                 snowflake.remove();
                 createSnowflake();
             }, (duration + delay) * 1000);
         }
         
-        // Calculate time until midnight in friend's timezone
+        // ===== SIMPLE UK COUNTDOWN - GUARANTEED WORKING =====
         function updateCountdown() {
-            // Get current time in friend's timezone
             const now = new Date();
-            const options = { timeZone: friendTimezone, hour12: false };
-            const friendTimeStr = now.toLocaleTimeString('en-US', options);
-            const friendDateStr = now.toLocaleDateString('en-US', { timeZone: friendTimezone });
+            const currentUTC = now.getTime(); // Current time in milliseconds (UTC)
             
-            // Create a date object for midnight in friend's timezone
-            const midnight = new Date(friendDateStr + ' 24:00:00');
-            const friendNow = new Date(now.toLocaleString('en-US', { timeZone: friendTimezone }));
+            // Get current UTC date
+            const currentYear = now.getUTCFullYear();
+            const currentMonth = now.getUTCMonth(); // 0-11 (0 = January)
+            const currentDay = now.getUTCDate(); // 1-31
             
-            // If it's already Christmas in their timezone
-            const isChristmas = friendNow.getMonth() === 11 && friendNow.getDate() === 25;
-            
-            if (isChristmas) {
-                // It's Christmas! Show the message
+            // Check if it's already Christmas (Dec 25)
+            if (currentMonth === 11 && currentDay === 25) {
+                // It's Christmas!
                 showChristmasMessage();
                 hoursEl.textContent = '00';
                 minutesEl.textContent = '00';
@@ -499,18 +485,22 @@
                 return;
             }
             
-            // Calculate time difference
-            let diff = midnight - friendNow;
+            // Create target: December 25, 00:00 UTC (UK time)
+            let target = new Date(Date.UTC(currentYear, 11, 25, 0, 0, 0, 0));
             
-            // If midnight has passed but it's not Christmas yet (edge case)
-            if (diff < 0) {
-                diff += 24 * 60 * 60 * 1000; // Add 24 hours
+            // If we've passed Christmas this year, use next year
+            if (target.getTime() < currentUTC) {
+                target = new Date(Date.UTC(currentYear + 1, 11, 25, 0, 0, 0, 0));
             }
             
+            // Calculate difference in milliseconds
+            const diff = target.getTime() - currentUTC;
+            
             // Calculate hours, minutes, seconds
-            const hours = Math.floor(diff / (1000 * 60 * 60));
-            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-            const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+            const totalSeconds = Math.floor(diff / 1000);
+            const hours = Math.floor(totalSeconds / 3600);
+            const minutes = Math.floor((totalSeconds % 3600) / 60);
+            const seconds = totalSeconds % 60;
             
             // Update display
             hoursEl.textContent = hours.toString().padStart(2, '0');
@@ -521,6 +511,9 @@
             if (hours === 0 && minutes === 0 && seconds <= 1) {
                 showChristmasMessage();
             }
+            
+            // Debug log (remove in final)
+            console.log(`UK Countdown: ${hours}h ${minutes}m ${seconds}s`);
         }
         
         // Show Christmas message and animations
