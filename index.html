@@ -399,14 +399,64 @@
 
     <script>
         // Configuration - CHANGE THESE VALUES
-        const friendName = "Eunice"; // Ma friends name
-        const friendTimezone = "Europe/London"; // friend's timezone
-        
-        // Set friend's name
-        document.getElementById('friendName').textContent = `For ${friendName}!`;
-        
-        // Set timezone display
-        document.getElementById('timezoneDisplay').textContent = friendTimezone;
+        // ==== CHANGE THESE TWO LINES ====
+const friendName = "Eunice"; // ← CHANGE TO YOUR FRIEND'S NAME
+const friendTimezone = "Europe/London"; // ← UK TIMEZONE
+// =================================
+
+// SIMPLE UK TIME CALCULATION
+function updateCountdown() {
+    const now = new Date();
+    
+    // Get current time in UK (GMT/UTC+0)
+    const ukNow = new Date(now.getTime() + (now.getTimezoneOffset() * 60000));
+    
+    // Get current UK date
+    const ukDate = ukNow.getUTCDate();
+    const ukMonth = ukNow.getUTCMonth();
+    const ukHours = ukNow.getUTCHours();
+    const ukMinutes = ukNow.getUTCMinutes();
+    
+    console.log(`UK Current: Dec ${ukDate}, ${ukHours}:${ukMinutes}`);
+    
+    // If it's already Christmas in UK
+    if (ukMonth === 11 && ukDate === 25) { // 11 = December
+        showChristmasMessage();
+        hoursEl.textContent = '00';
+        minutesEl.textContent = '00';
+        secondsEl.textContent = '00';
+        return;
+    }
+    
+    // Create target: December 25, 00:00 UK time
+    let target = new Date(Date.UTC(ukNow.getUTCFullYear(), 11, 25, 0, 0, 0));
+    
+    // If we're past Dec 25, show message (shouldn't happen)
+    if (target < ukNow) {
+        showChristmasMessage();
+        return;
+    }
+    
+    // Calculate difference
+    const diff = target - ukNow;
+    
+    // Calculate hours, minutes, seconds
+    const hours = Math.floor(diff / (1000 * 60 * 60));
+    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+    
+    // Update display
+    hoursEl.textContent = hours.toString().padStart(2, '0');
+    minutesEl.textContent = minutes.toString().padStart(2, '0');
+    secondsEl.textContent = seconds.toString().padStart(2, '0');
+    
+    console.log(`Time left: ${hours}h ${minutes}m ${seconds}s`);
+    
+    // Check if it's midnight
+    if (hours === 0 && minutes === 0 && seconds <= 1) {
+        showChristmasMessage();
+    }
+}
         
         // Get DOM elements
         const hoursEl = document.getElementById('hours');
